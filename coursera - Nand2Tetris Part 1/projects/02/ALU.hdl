@@ -43,4 +43,27 @@ CHIP ALU {
 
     PARTS:
    // Put you code here:
+   Mux16(a=x, b=false, sel=zx, out=x2);
+   Not16(in=x2, out=notX2);
+   Mux16(a=x2, b=notX2, sel=nx, out=x3);
+   // Final x after zx and nx is x3
+   Mux16(a=y, b=false, sel=zy, out=y2);
+   Not16(in=y2, out=notY2);
+   Mux16(a=y2, b=notY2, sel=ny, out=y3);
+   // Final y after zy and ny is y3
+   Add16(a=x3, b=y3, out=resultAdd);
+   And16(a=x3, b=y3, out=resultAnd);
+   Mux16(a=resultAnd, b=resultAdd, sel=f, out=output1);
+   // Output after function f is output1
+   Not16(in=output1, out=notOutput1);
+   Mux16(a=output1, b=notOutput1, sel=no, out=out);
+   Mux16(a=output1, b=notOutput1, sel=no, out[0..14]=tempA, out[15]=MSB);
+   Mux16(a=output1, b=notOutput1, sel=no, out[0..7]=outputA, out[8..15]=outputB);
+   // Final output after negation flag no is outputFinal
+   Or8Way(in=outputA, out=zr1);
+   Or8Way(in=outputB, out=zr2);
+   Or(a=zr1, b=zr2, out=notZr);
+   Not(in=notZr, out=zr);
+   // Check for any 1's
+   And(a=MSB, b=true, out=ng);
 }
