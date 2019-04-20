@@ -17,4 +17,13 @@ CHIP PC {
 
     PARTS:
     // Put your code here:
+    FullAdder(a=reset, b=load, c=inc, sum=sel0, carry=sel1);
+    Inc16(in=outFinal, out=outInc);
+    Mux16(a=outFinal, b=outInc, sel=inc, out=out1);
+    Mux16(a=out1, b=in, sel=load, out=out2);
+    Mux16(a=out2, b=false, sel=reset, out=inFinal);
+    Or(a=reset, b=load, out=loadOrReset);
+    Or(a=loadOrReset, b=inc, out=loadOrIncOrReset);
+    Register(in=inFinal, load=loadOrIncOrReset, out=outFinal);
+    Register(in=inFinal, load=loadOrIncOrReset, out=out);
 }
